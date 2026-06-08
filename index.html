@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSG News to Blog</title>
+<title>CSG / News to Blog</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -15,11 +15,9 @@
     --surface2: #1a2233;
     --border: #1e2d45;
     --accent: #00c2ff;
-    --accent2: #0077b6;
     --text: #e2e8f0;
     --muted: #64748b;
     --success: #10b981;
-    --warn: #f59e0b;
     --danger: #ef4444;
     --mono: 'IBM Plex Mono', monospace;
     --sans: 'IBM Plex Sans', sans-serif;
@@ -32,6 +30,8 @@
     font-size: 14px;
     line-height: 1.6;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
   header {
@@ -41,6 +41,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
   }
 
   .logo {
@@ -49,9 +50,7 @@
     font-weight: 600;
     color: var(--accent);
     letter-spacing: 0.05em;
-    text-transform: uppercase;
   }
-
   .logo span { color: var(--muted); font-weight: 400; }
 
   .tag {
@@ -65,31 +64,141 @@
     letter-spacing: 0.08em;
   }
 
-  .layout {
+  .main {
     display: grid;
-    grid-template-columns: 340px 1fr;
-    height: calc(100vh - 53px);
+    grid-template-columns: 400px 1fr;
+    flex: 1;
+    overflow: hidden;
   }
 
-  /* LEFT PANEL */
+  /* LEFT */
   .left {
     background: var(--surface);
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
+    padding: 24px;
+    gap: 20px;
+    overflow-y: auto;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .api-key-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  input[type="password"], input[type="text"], textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 12px;
+    border-radius: 4px;
+    font-family: var(--sans);
+    font-size: 13px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input[type="password"]:focus, input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+  input::placeholder, textarea::placeholder { color: var(--muted); }
+
+  textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.5;
+  }
+
+  .save-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 9px 14px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .save-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .save-btn.saved { border-color: var(--success); color: var(--success); }
+
+  .input-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .hint {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .hint a { color: var(--accent); text-decoration: none; }
+  .hint a:hover { text-decoration: underline; }
+
+  select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 12px;
+    border-radius: 4px;
+    font-family: var(--sans);
+    font-size: 13px;
+    width: 100%;
+    outline: none;
+    cursor: pointer;
+  }
+  select:focus { border-color: var(--accent); }
+
+  .draft-btn {
+    background: var(--accent);
+    border: none;
+    color: #000;
+    padding: 11px 20px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    width: 100%;
+  }
+  .draft-btn:hover { background: #33cfff; }
+  .draft-btn:disabled { opacity: 0.4; cursor: not-allowed; background: var(--accent); }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* RIGHT */
+  .right {
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
   }
 
-  .panel-header {
-    padding: 14px 16px 10px;
+  .right-header {
+    padding: 14px 24px;
     border-bottom: 1px solid var(--border);
+    background: var(--surface);
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
   }
 
-  .panel-title {
+  .right-title {
     font-family: var(--mono);
     font-size: 11px;
     color: var(--muted);
@@ -97,101 +206,45 @@
     text-transform: uppercase;
   }
 
-  .refresh-btn {
+  .copy-btn {
     background: none;
     border: 1px solid var(--border);
     color: var(--muted);
-    padding: 4px 10px;
+    padding: 6px 14px;
     border-radius: 4px;
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 11px;
     cursor: pointer;
     transition: all 0.15s;
-    letter-spacing: 0.05em;
   }
-  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .copy-btn:hover { border-color: var(--success); color: var(--success); }
+  .copy-btn.copied { border-color: var(--success); color: var(--success); }
 
-  .feed-tabs {
-    display: flex;
-    gap: 0;
-    padding: 10px 16px 0;
-    flex-wrap: wrap;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-
-  .feed-tab {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 3px 9px;
-    border-radius: 3px;
-    font-family: var(--mono);
-    font-size: 10px;
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.04em;
-  }
-  .feed-tab.active { background: rgba(0,194,255,0.1); border-color: var(--accent); color: var(--accent); }
-  .feed-tab:hover:not(.active) { border-color: var(--muted); color: var(--text); }
-
-  .articles-list {
+  .output-area {
     flex: 1;
     overflow-y: auto;
-    padding: 10px 0;
+    padding: 32px 40px;
   }
+  .output-area::-webkit-scrollbar { width: 4px; }
+  .output-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  .articles-list::-webkit-scrollbar { width: 4px; }
-  .articles-list::-webkit-scrollbar-track { background: transparent; }
-  .articles-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .article-item {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: background 0.1s;
-    position: relative;
-  }
-  .article-item:hover { background: var(--surface2); }
-  .article-item.selected { background: var(--surface2); border-left: 2px solid var(--accent); padding-left: 14px; }
-
-  .article-source {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--accent);
-    letter-spacing: 0.06em;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-  }
-
-  .article-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.4;
-    margin-bottom: 5px;
-  }
-
-  .article-meta {
-    font-family: var(--mono);
-    font-size: 10px;
+  .idle-state {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     color: var(--muted);
-  }
-
-  .empty-state {
-    padding: 40px 20px;
     text-align: center;
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 12px;
-    line-height: 2;
   }
+  .idle-icon { font-size: 36px; opacity: 0.25; }
+  .idle-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .idle-sub { font-size: 13px; opacity: 0.6; max-width: 300px; }
 
   .spinner {
     display: inline-block;
-    width: 14px;
-    height: 14px;
+    width: 13px; height: 13px;
     border: 2px solid var(--border);
     border-top-color: var(--accent);
     border-radius: 50%;
@@ -201,151 +254,16 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* RIGHT PANEL */
-  .right {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: var(--bg);
-  }
-
-  .right-header {
-    padding: 14px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-    background: var(--surface);
-  }
-
-  .selected-title {
-    font-size: 13px;
-    color: var(--text);
-    font-weight: 500;
-    flex: 1;
-    margin-right: 16px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .selected-title.placeholder { color: var(--muted); font-style: italic; font-weight: 300; }
-
-  .controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-
-  .product-select {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-family: var(--sans);
-    font-size: 12px;
-    cursor: pointer;
-    outline: none;
-  }
-  .product-select:focus { border-color: var(--accent); }
-
-  .draft-btn {
-    background: var(--accent);
-    border: none;
-    color: #000;
-    padding: 7px 18px;
-    border-radius: 4px;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    letter-spacing: 0.06em;
-    transition: all 0.15s;
-    text-transform: uppercase;
-  }
-  .draft-btn:hover { background: #33cfff; }
-  .draft-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .copy-btn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 7px 14px;
-    border-radius: 4px;
-    font-family: var(--mono);
-    font-size: 11px;
-    cursor: pointer;
-    letter-spacing: 0.04em;
-    transition: all 0.15s;
-  }
-  .copy-btn:hover { border-color: var(--success); color: var(--success); }
-  .copy-btn.copied { border-color: var(--success); color: var(--success); }
-
-  .output-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 28px 32px;
-  }
-
-  .output-area::-webkit-scrollbar { width: 4px; }
-  .output-area::-webkit-scrollbar-track { background: transparent; }
-  .output-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .idle-state {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    color: var(--muted);
-  }
-
-  .idle-icon {
-    font-size: 32px;
-    opacity: 0.3;
-  }
-
-  .idle-label {
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .idle-sub {
-    font-size: 13px;
-    color: var(--muted);
-    opacity: 0.6;
-  }
-
-  .generating {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px 0;
-  }
-
   .gen-label {
     font-family: var(--mono);
     font-size: 11px;
     color: var(--accent);
-    letter-spacing: 0.08em;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
   }
 
-  .blog-output {
-    font-family: var(--sans);
-    font-size: 14px;
-    line-height: 1.8;
-    color: var(--text);
-    white-space: pre-wrap;
-  }
-
+  .blog-output { font-size: 14px; line-height: 1.8; color: var(--text); }
   .blog-output h1 { font-size: 22px; font-weight: 600; margin: 0 0 20px; color: #fff; line-height: 1.3; }
   .blog-output h2 { font-size: 17px; font-weight: 600; margin: 28px 0 10px; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
   .blog-output h3 { font-size: 14px; font-weight: 600; margin: 20px 0 8px; color: var(--accent); }
@@ -362,22 +280,20 @@
     margin-bottom: 28px;
     font-family: var(--mono);
     font-size: 12px;
-    line-height: 1.8;
+    line-height: 2;
   }
-
-  .meta-block .meta-label { color: var(--muted); }
-  .meta-block .meta-value { color: var(--text); }
+  .meta-label { color: var(--muted); }
+  .meta-value { color: var(--text); }
 
   .stream-cursor {
     display: inline-block;
-    width: 8px;
-    height: 14px;
+    width: 8px; height: 14px;
     background: var(--accent);
     animation: blink 1s step-end infinite;
     vertical-align: text-bottom;
     margin-left: 2px;
   }
-  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
   .error-msg {
     background: rgba(239,68,68,0.1);
@@ -387,32 +303,17 @@
     border-radius: 4px;
     font-family: var(--mono);
     font-size: 12px;
-    margin: 20px 0;
   }
 
-  .status-bar {
-    padding: 6px 24px;
-    border-top: 1px solid var(--border);
-    background: var(--surface);
+  .key-status {
     font-family: var(--mono);
     font-size: 10px;
-    color: var(--muted);
-    display: flex;
-    gap: 20px;
-    flex-shrink: 0;
-  }
-
-  .status-dot {
+    padding: 3px 8px;
+    border-radius: 3px;
     display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--success);
-    margin-right: 5px;
-    vertical-align: middle;
   }
-  .status-dot.loading { background: var(--warn); animation: pulse 1s ease-in-out infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .key-status.set { background: rgba(16,185,129,0.1); color: var(--success); border: 1px solid rgba(16,185,129,0.2); }
+  .key-status.unset { background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
 </style>
 </head>
 <body>
@@ -422,245 +323,148 @@
   <div class="tag">Internal Tool</div>
 </header>
 
-<div class="layout">
-  <!-- LEFT: News Feed -->
+<div class="main">
+  <!-- LEFT: Inputs -->
   <div class="left">
-    <div class="panel-header">
-      <span class="panel-title">Telecom News</span>
-      <button class="refresh-btn" id="refreshBtn" onclick="loadFeeds()">Refresh</button>
-    </div>
-    <div class="feed-tabs" id="feedTabs"></div>
-    <div class="articles-list" id="articlesList">
-      <div class="empty-state">
-        <span class="spinner"></span> Loading feeds...
+
+    <div>
+      <div class="section-label">API Key</div>
+      <div class="api-key-row">
+        <input type="password" id="apiKey" placeholder="sk-ant-..." />
+        <button class="save-btn" id="saveKeyBtn" onclick="saveKey()">Save</button>
+      </div>
+      <div style="margin-top:8px; display:flex; align-items:center; gap:8px;">
+        <span class="key-status unset" id="keyStatus">Not set</span>
+        <span class="hint">Get your key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></span>
       </div>
     </div>
+
+    <div class="divider"></div>
+
+    <div class="input-group">
+      <div class="section-label">Article URL or Headline</div>
+      <textarea id="articleInput" placeholder="Paste a URL&#10;&#10;or paste the headline and a sentence or two about the article"></textarea>
+      <div class="hint">Grab anything from Google Alerts, Google News, or any article you find.</div>
+    </div>
+
+    <div class="input-group">
+      <div class="section-label">Tie to CSG Product</div>
+      <select id="productSelect">
+        <option value="general">No specific product</option>
+        <option value="m106pro">CSG m106 Pro Gateway Router</option>
+        <option value="m519">CSG m519</option>
+        <option value="m212">CSG m212</option>
+        <option value="multipath">MultiPath (Starlink + 5G)</option>
+        <option value="mobile-internet">Mobile Internet</option>
+        <option value="fixed-wireless">Fixed Wireless Access</option>
+        <option value="failover">Failover Connectivity</option>
+        <option value="rural">Rural Internet</option>
+        <option value="wfh">Work From Home</option>
+        <option value="sureconnect">CSG SureConnect</option>
+        <option value="pots">POTS Replacement</option>
+        <option value="managed">Managed Services</option>
+      </select>
+    </div>
+
+    <button class="draft-btn" id="draftBtn" onclick="generateDraft()">Draft Blog Post</button>
+
   </div>
 
-  <!-- RIGHT: Draft Output -->
+  <!-- RIGHT: Output -->
   <div class="right">
     <div class="right-header">
-      <div class="selected-title placeholder" id="selectedTitle">Select an article to draft a blog post</div>
-      <div class="controls">
-        <select class="product-select" id="productSelect">
-          <option value="general">No specific product</option>
-          <option value="m106pro">CSG m106 Pro</option>
-          <option value="multipath">MultiPath (Starlink + 5G)</option>
-          <option value="mobile-internet">Mobile Internet</option>
-          <option value="fixed-wireless">Fixed Wireless Access</option>
-          <option value="failover">Failover Connectivity</option>
-        </select>
-        <button class="copy-btn" id="copyBtn" onclick="copyOutput()" style="display:none">Copy</button>
-        <button class="draft-btn" id="draftBtn" onclick="generateDraft()" disabled>Draft Blog</button>
-      </div>
+      <span class="right-title">Draft Output</span>
+      <button class="copy-btn" id="copyBtn" onclick="copyOutput()" style="display:none">Copy Text</button>
     </div>
     <div class="output-area" id="outputArea">
       <div class="idle-state">
-        <div class="idle-icon">📡</div>
-        <div class="idle-label">No article selected</div>
-        <div class="idle-sub">Pick a headline from the left to generate a CSG blog draft</div>
+        <div class="idle-icon">✍️</div>
+        <div class="idle-label">Ready to draft</div>
+        <div class="idle-sub">Paste an article URL or headline on the left and hit Draft Blog Post</div>
       </div>
-    </div>
-    <div class="status-bar">
-      <span><span class="status-dot" id="statusDot"></span><span id="statusText">Ready</span></span>
-      <span id="articleCount">0 articles loaded</span>
     </div>
   </div>
 </div>
 
 <script>
-const FEEDS = [
-  { label: "All", query: null },
-  { label: "5G Business", query: "5G business internet" },
-  { label: "Verizon", query: "Verizon business" },
-  { label: "T-Mobile", query: "T-Mobile business" },
-  { label: "Starlink", query: "Starlink business" },
-  { label: "Fixed Wireless", query: "fixed wireless access" },
-  { label: "Telecom", query: "telecom industry" },
-  { label: "Cellular", query: "cellular connectivity" },
-];
+const PRODUCT_MAP = {
+  'general': 'no specific product (keep it educational and brand-building for CSG)',
+  'm106pro': 'the CSG m106 Pro 4G LTE Gateway Router (https://connectedsolutionsgroup.com/pages/m106-pro-4g-lte-gateway-router)',
+  'm519': 'the CSG m519 (https://connectedsolutionsgroup.com/pages/m519)',
+  'm212': 'the CSG m212 (https://connectedsolutionsgroup.com/pages/m212)',
+  'multipath': 'CSG MultiPath: Starlink + 5G bonded internet (https://connectedsolutionsgroup.com/pages/multipath)',
+  'mobile-internet': 'CSG Mobile Internet (https://connectedsolutionsgroup.com/pages/mobile-internet)',
+  'fixed-wireless': 'CSG Fixed Wireless Access (https://connectedsolutionsgroup.com/pages/fixed-wireless-access)',
+  'failover': 'CSG Failover Connectivity (https://connectedsolutionsgroup.com/pages/failover-connectivity)',
+  'rural': 'CSG Rural Internet (https://connectedsolutionsgroup.com/pages/rural-internet)',
+  'wfh': 'CSG Work From Home internet (https://connectedsolutionsgroup.com/pages/work-from-home)',
+  'sureconnect': 'CSG SureConnect multi-carrier data plans (https://connectedsolutionsgroup.com/pages/csg-sureconnect)',
+  'pots': 'CSG POTS Replacement (https://connectedsolutionsgroup.com/pages/pots-replacement)',
+  'managed': 'CSG Managed Services (https://connectedsolutionsgroup.com/pages/managed-services)',
+};
 
-const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+let lastDraftText = '';
 
-let allArticles = [];
-let filteredArticles = [];
-let selectedArticle = null;
-let activeTab = 0;
-let isGenerating = false;
-
-function getRSSUrl(query) {
-  const encoded = encodeURIComponent(`"${query}" when:7d`);
-  return `https://news.google.com/rss/search?q=${encoded}&hl=en-US&gl=US&ceid=US:en`;
-}
-
-function parseRSS(xml, source) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(xml, "text/xml");
-  const items = doc.querySelectorAll("item");
-  const results = [];
-  items.forEach(item => {
-    const title = item.querySelector("title")?.textContent?.trim();
-    const link = item.querySelector("link")?.textContent?.trim();
-    const pubDate = item.querySelector("pubDate")?.textContent?.trim();
-    const description = item.querySelector("description")?.textContent?.trim();
-    if (title && link) {
-      results.push({
-        title: title.replace(/ - [^-]+$/, ''), // remove source suffix
-        link,
-        pubDate: pubDate ? new Date(pubDate) : new Date(),
-        description: description ? description.replace(/<[^>]+>/g, '').substring(0, 200) : '',
-        source,
-      });
-    }
-  });
-  return results;
-}
-
-function timeAgo(date) {
-  const seconds = Math.floor((new Date() - date) / 1000);
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  return `${Math.floor(seconds / 86400)}d ago`;
-}
-
-async function fetchFeed(query) {
-  try {
-    const rssUrl = getRSSUrl(query);
-    const proxyUrl = CORS_PROXY + encodeURIComponent(rssUrl);
-    const res = await fetch(proxyUrl);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
-    return parseRSS(text, query);
-  } catch (e) {
-    console.warn(`Feed failed for "${query}":`, e.message);
-    return [];
+// Load saved key
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('csg_api_key');
+  if (saved) {
+    document.getElementById('apiKey').value = saved;
+    updateKeyStatus(true);
   }
+});
+
+function saveKey() {
+  const key = document.getElementById('apiKey').value.trim();
+  if (!key) return;
+  localStorage.setItem('csg_api_key', key);
+  const btn = document.getElementById('saveKeyBtn');
+  btn.textContent = 'Saved';
+  btn.classList.add('saved');
+  setTimeout(() => { btn.textContent = 'Save'; btn.classList.remove('saved'); }, 2000);
+  updateKeyStatus(true);
 }
 
-async function loadFeeds() {
-  const btn = document.getElementById('refreshBtn');
-  btn.disabled = true;
-  btn.textContent = 'Loading...';
-  setStatus('loading', 'Fetching news feeds...');
-
-  document.getElementById('articlesList').innerHTML = `<div class="empty-state"><span class="spinner"></span> Loading feeds...</div>`;
-
-  const queries = FEEDS.filter(f => f.query).map(f => f.query);
-  const results = await Promise.all(queries.map(fetchFeed));
-
-  // Deduplicate by title
-  const seen = new Set();
-  allArticles = [];
-  results.flat().forEach(a => {
-    const key = a.title.toLowerCase().substring(0, 60);
-    if (!seen.has(key)) {
-      seen.add(key);
-      allArticles.push(a);
-    }
-  });
-
-  // Sort by date
-  allArticles.sort((a, b) => b.pubDate - a.pubDate);
-
-  document.getElementById('articleCount').textContent = `${allArticles.length} articles loaded`;
-  btn.disabled = false;
-  btn.textContent = 'Refresh';
-  setStatus('ready', 'Ready');
-
-  renderTabs();
-  applyTab(activeTab);
-}
-
-function renderTabs() {
-  const container = document.getElementById('feedTabs');
-  container.innerHTML = FEEDS.map((f, i) => `
-    <button class="feed-tab ${i === activeTab ? 'active' : ''}" onclick="applyTab(${i})">${f.label}</button>
-  `).join('');
-}
-
-function applyTab(index) {
-  activeTab = index;
-  renderTabs();
-  const tab = FEEDS[index];
-  if (!tab.query) {
-    filteredArticles = allArticles;
-  } else {
-    const q = tab.query.toLowerCase();
-    filteredArticles = allArticles.filter(a =>
-      a.source === tab.query ||
-      a.title.toLowerCase().includes(q.split(' ')[0]) ||
-      a.title.toLowerCase().includes(q.split(' ')[1] || '')
-    );
-    if (filteredArticles.length === 0) filteredArticles = allArticles;
-  }
-  renderArticles();
-}
-
-function renderArticles() {
-  const container = document.getElementById('articlesList');
-  if (filteredArticles.length === 0) {
-    container.innerHTML = `<div class="empty-state">No articles found.<br>Try refreshing or select All.</div>`;
-    return;
-  }
-  container.innerHTML = filteredArticles.map((a, i) => `
-    <div class="article-item ${selectedArticle === a ? 'selected' : ''}" onclick="selectArticle(${filteredArticles.indexOf(a)})">
-      <div class="article-source">${a.source}</div>
-      <div class="article-title">${a.title}</div>
-      <div class="article-meta">${timeAgo(a.pubDate)}</div>
-    </div>
-  `).join('');
-}
-
-function selectArticle(index) {
-  selectedArticle = filteredArticles[index];
-  renderArticles();
-
-  document.getElementById('selectedTitle').textContent = selectedArticle.title;
-  document.getElementById('selectedTitle').classList.remove('placeholder');
-  document.getElementById('draftBtn').disabled = false;
-
-  // Reset output
-  document.getElementById('outputArea').innerHTML = `
-    <div class="idle-state">
-      <div class="idle-icon">✍️</div>
-      <div class="idle-label">Article selected</div>
-      <div class="idle-sub">Choose a product angle and click Draft Blog</div>
-    </div>
-  `;
-  document.getElementById('copyBtn').style.display = 'none';
+function updateKeyStatus(isSet) {
+  const el = document.getElementById('keyStatus');
+  el.textContent = isSet ? 'Key saved' : 'Not set';
+  el.className = 'key-status ' + (isSet ? 'set' : 'unset');
 }
 
 async function generateDraft() {
-  if (!selectedArticle || isGenerating) return;
-  isGenerating = true;
-
+  const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('csg_api_key');
+  const articleInput = document.getElementById('articleInput').value.trim();
   const product = document.getElementById('productSelect').value;
+
+  if (!apiKey) {
+    showError('Enter your Anthropic API key first.');
+    return;
+  }
+  if (!articleInput) {
+    showError('Paste an article URL or headline first.');
+    return;
+  }
+
   const draftBtn = document.getElementById('draftBtn');
   draftBtn.disabled = true;
   draftBtn.textContent = 'Drafting...';
   document.getElementById('copyBtn').style.display = 'none';
-  setStatus('loading', 'Generating draft...');
 
-  const productMap = {
-    'general': 'no specific product (keep it educational and brand-building for CSG)',
-    'm106pro': 'the CSG m106 Pro 4G LTE Gateway Router (https://connectedsolutionsgroup.com/pages/m106-pro-4g-lte-gateway-router)',
-    'multipath': 'CSG MultiPath: Starlink + 5G bonded internet solution (https://connectedsolutionsgroup.com/pages/multipath)',
-    'mobile-internet': 'CSG Mobile Internet service (https://connectedsolutionsgroup.com/pages/mobile-internet)',
-    'fixed-wireless': 'CSG Fixed Wireless Access (https://connectedsolutionsgroup.com/pages/fixed-wireless-access)',
-    'failover': 'CSG Failover Connectivity (https://connectedsolutionsgroup.com/pages/failover-connectivity)',
-  };
+  const productLabel = PRODUCT_MAP[product];
 
-  const productLabel = productMap[product];
+  // Determine if input is a URL or text
+  const isURL = articleInput.startsWith('http://') || articleInput.startsWith('https://');
+  const inputContext = isURL
+    ? `The article URL is: ${articleInput}\n\nUse your knowledge of this topic to write the blog post. If you cannot access the URL directly, use the URL's topic and domain as context clues.`
+    : `The article headline/summary is:\n\n${articleInput}`;
 
   const prompt = `You are a content writer for Connected Solutions Group (CSG), a Verizon Platinum Elite Partner based in Richmond, VA that sells B2B wireless internet solutions including 5G, LTE, Starlink bonding, fixed wireless, and failover connectivity.
 
-A news article has been published with this headline and summary:
+A news article has been shared with you:
 
-HEADLINE: ${selectedArticle.title}
-SUMMARY: ${selectedArticle.description}
-SOURCE TOPIC: ${selectedArticle.source}
+${inputContext}
 
-Write a complete, publish-ready blog post for CSG's website (connectedsolutionsgroup.com/blogs/news) based on this news. The post should:
+Write a complete, publish-ready blog post for CSG's website (connectedsolutionsgroup.com/blogs/news) inspired by this news. The post should:
 
 1. Use the news as a jumping-off point, not a summary. Interpret what it means for CSG's B2B customers.
 2. Be educational and authoritative, not salesy.
@@ -671,29 +475,35 @@ Write a complete, publish-ready blog post for CSG's website (connectedsolutionsg
    - Meta description (155 chars max)
    - 3-5 H2 sections with body copy
    - A short FAQ section (2-3 questions) at the end
-   - A soft CTA at the end linking to https://connectedsolutionsgroup.com/pages/connect-with-us
+   - A soft CTA linking to https://connectedsolutionsgroup.com/pages/connect-with-us
 
 Writing rules:
 - No em dashes. Rewrite sentences to avoid them.
-- No smart quotes in the output, use straight quotes only.
+- Straight quotes only, no smart quotes.
 - Active voice throughout.
-- No filler phrases like "In today's world" or "In conclusion".
+- No filler openers like "In today's world" or "In conclusion".
 - Short paragraphs, plain language.
 - Tone: knowledgeable, direct, practical. Like a trusted connectivity advisor, not a marketer.
 
-Format the output clearly with META TITLE:, META DESCRIPTION:, then the blog post starting with the H1.`;
+Format output as:
+META TITLE: ...
+META DESCRIPTION: ...
+
+# [H1 title]
+[rest of post]`;
 
   const outputArea = document.getElementById('outputArea');
-  outputArea.innerHTML = `
-    <div class="generating">
-      <div class="gen-label"><span class="spinner"></span> Generating draft...</div>
-    </div>
-  `;
+  outputArea.innerHTML = '<div class="gen-label"><span class="spinner"></span> Generating draft...</div>';
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-client-side-api-key-flag": "true"
+      },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1000,
@@ -702,7 +512,10 @@ Format the output clearly with META TITLE:, META DESCRIPTION:, then the blog pos
       })
     });
 
-    if (!response.ok) throw new Error(`API error ${response.status}`);
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || `HTTP ${response.status}`);
+    }
 
     let fullText = '';
     outputArea.innerHTML = '<div class="blog-output" id="blogContent"></div>';
@@ -714,10 +527,8 @@ Format the output clearly with META TITLE:, META DESCRIPTION:, then the blog pos
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-
       const chunk = decoder.decode(value);
       const lines = chunk.split('\n').filter(l => l.startsWith('data: '));
-
       for (const line of lines) {
         const data = line.slice(6);
         if (data === '[DONE]') continue;
@@ -732,23 +543,20 @@ Format the output clearly with META TITLE:, META DESCRIPTION:, then the blog pos
       }
     }
 
+    lastDraftText = fullText;
     blogContent.innerHTML = renderBlog(fullText);
     document.getElementById('copyBtn').style.display = 'inline-block';
     document.getElementById('copyBtn').dataset.text = fullText;
-    setStatus('ready', 'Draft complete');
 
   } catch(err) {
-    outputArea.innerHTML = `<div class="error-msg">Error: ${err.message}. Check your connection and try again.</div>`;
-    setStatus('ready', 'Error');
+    showError(err.message);
   }
 
-  isGenerating = false;
   draftBtn.disabled = false;
-  draftBtn.textContent = 'Draft Blog';
+  draftBtn.textContent = 'Draft Blog Post';
 }
 
 function renderBlog(text) {
-  // Extract meta block
   let meta = '';
   let body = text;
 
@@ -756,15 +564,13 @@ function renderBlog(text) {
   const metaDescMatch = text.match(/META DESCRIPTION:\s*(.+)/i);
 
   if (metaTitleMatch || metaDescMatch) {
-    meta = `<div class="meta-block">`;
+    meta = '<div class="meta-block">';
     if (metaTitleMatch) meta += `<div><span class="meta-label">META TITLE: </span><span class="meta-value">${metaTitleMatch[1].trim()}</span></div>`;
     if (metaDescMatch) meta += `<div><span class="meta-label">META DESC: </span><span class="meta-value">${metaDescMatch[1].trim()}</span></div>`;
-    meta += `</div>`;
-    // Remove meta lines from body
+    meta += '</div>';
     body = text.replace(/META TITLE:.+\n?/i, '').replace(/META DESCRIPTION:.+\n?/i, '').trim();
   }
 
-  // Convert markdown-ish to HTML
   body = body
     .replace(/^# (.+)$/gm, '<h1>$1</h1>')
     .replace(/^## (.+)$/gm, '<h2>$1</h2>')
@@ -779,31 +585,22 @@ function renderBlog(text) {
     .map(p => p.startsWith('<') ? p : `<p>${p}</p>`)
     .join('\n');
 
-  return meta + `<div>${body}</div>`;
+  return meta + `<div class="blog-output">${body}</div>`;
 }
 
 function copyOutput() {
-  const btn = document.getElementById('copyBtn');
-  const text = btn.dataset.text || '';
+  const text = document.getElementById('copyBtn').dataset.text || '';
   navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = 'Copy';
-      btn.classList.remove('copied');
-    }, 2000);
+    setTimeout(() => { btn.textContent = 'Copy Text'; btn.classList.remove('copied'); }, 2000);
   });
 }
 
-function setStatus(state, text) {
-  const dot = document.getElementById('statusDot');
-  const label = document.getElementById('statusText');
-  dot.className = 'status-dot' + (state === 'loading' ? ' loading' : '');
-  label.textContent = text;
+function showError(msg) {
+  document.getElementById('outputArea').innerHTML = `<div class="error-msg">Error: ${msg}</div>`;
 }
-
-// Init
-loadFeeds();
 </script>
 </body>
 </html>
